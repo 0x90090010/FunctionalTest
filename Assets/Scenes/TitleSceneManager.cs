@@ -17,19 +17,24 @@ public class TitleSceneManager : MonoBehaviour
     private GameObject titleSampleButtonImageObject;
     private List<RectTransform> imageRectTransforms;
     private List<RectTransform> buttonsRectTransforms;
+    private List<RectTransform> buttonsTextRectTransforms;
+    private List<int> buttonsTextDefaultSize;
+    private List<string> buttonPositionList;
 
     void Start()
     {
         imageRectTransforms = new List<RectTransform>();
         buttonsRectTransforms = new List<RectTransform>();
-
+        buttonsTextRectTransforms = new List<RectTransform>();
+        buttonsTextDefaultSize = new List<int>();
+        buttonPositionList = new List<string>();
         TitleMain();
         SetTitleBackground();
         SetButton();
         resizeCanvas = titleCanvasObject.AddComponent<ResizeManager>();
         resizeImage = titleBackgroundImageObject.AddComponent<ResizeManager>();
         screenSize = new Vector2(Screen.width, Screen.height);
-        defaultScreenSize = new Vector2(Screen.width, Screen.height); 
+        defaultScreenSize = new Vector2(Screen.width, Screen.height);
     }
 
     void Update()
@@ -42,7 +47,6 @@ public class TitleSceneManager : MonoBehaviour
         {
             if (resizeCanvas != null)
             {
-
                 Debug.Log("canvas");
                 resizeCanvas.ResizeCanvas();
                 screenSize = new Vector2(Screen.width, Screen.height);
@@ -57,6 +61,9 @@ public class TitleSceneManager : MonoBehaviour
                 Debug.Log("image");
                 resizeImage.ResizeFullScreenImageOverCanvas(imageRectTransforms);
                 resizeImage.ResizeImageKeepingAspect(defaultScreenSize, buttonsRectTransforms);
+                resizeImage.ResizeText(defaultScreenSize, buttonsTextRectTransforms, buttonsTextDefaultSize);
+                //UpdatePositionList();
+                resizeImage.UpdatePosition(buttonsRectTransforms, buttonPositionList);
                 screenSize = new Vector2(Screen.width, Screen.height);
             }
             else
@@ -174,6 +181,18 @@ public class TitleSceneManager : MonoBehaviour
 
     void SetButton()
     {
+        TitleSampleButton();
+    }
+
+    void TitleSampleButton()
+    {
+        // 座標の初期位置を設定
+        int x = (int)(Screen.width) - 10;
+        int y = -10;
+        
+        // 座標をテキストとしてリストに追加
+        buttonPositionList.Add($"(int)(Screen.width) - 10,{y}");
+
         // image用のゲームオブジェクトを作成
         titleSampleButtonImageObject = new GameObject("TitleSampleButtonImage");
 
@@ -184,13 +203,48 @@ public class TitleSceneManager : MonoBehaviour
         titleSampleButtonImageObject.transform.SetParent(titleCanvas.transform, false);
 
         // RectTransformの設定
-        RectTransform rectTransform = titleSampleButtonImageObject.GetComponent<RectTransform>();
+        RectTransform imageRectTransform = titleSampleButtonImageObject.GetComponent<RectTransform>();
 
         // 仮のボタン
         Texture2D titleSampleButtonTexture = Resources.Load<Texture2D>("SampleButton");
+        Debug.Log("ButtonSize: " + titleSampleButtonTexture.width + ", " + titleSampleButtonTexture.height);
         Sprite sprite = Sprite.Create(titleSampleButtonTexture, new Rect(0, 0, titleSampleButtonTexture.width, titleSampleButtonTexture.height), new Vector2(0.5f, 0.5f));
-        rectTransform.sizeDelta = new Vector2(titleSampleButtonTexture.width, titleSampleButtonTexture.height);
+        imageRectTransform.sizeDelta = new Vector2(titleSampleButtonTexture.width, titleSampleButtonTexture.height);
+
+        // ここでボタン位置を設定する
+        imageRectTransform.anchorMin = new Vector2(0, 1);
+        imageRectTransform.anchorMax = new Vector2(0, 1);
+        imageRectTransform.pivot = new Vector2(1.0f, 1.0f);
+        imageRectTransform.anchoredPosition = new Vector2(x, y);
+
+        // text用のゲームオブジェクトを作成
+        GameObject titleSampleButtonTextObject = new GameObject("TitleSampleButtonText");
+
+        // textコンポーネントを追加
+        Text buttonText = titleSampleButtonTextObject.AddComponent<Text>();
+
+        // canvasの子要素に設定
+        titleSampleButtonTextObject.transform.SetParent(titleSampleButtonImageObject.transform, false);
+
+        // textの内容を設定
+        buttonText.text = "SAMPLE";
+        buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.color = Color.white;
+        buttonText.fontSize = 14;
+        buttonsTextDefaultSize.Add(buttonText.fontSize);
+
+        // RectTransformの設定
+        RectTransform textRectTransform = buttonText.GetComponent<RectTransform>();
+
+        textRectTransform.anchorMin = new Vector2(0, 0);
+        textRectTransform.anchorMax = new Vector2(1, 1);
+        textRectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        // ボタンの表示
         titleSampleButtonImage.sprite = sprite;
-        buttonsRectTransforms.Add(rectTransform);
-}
+        buttonsRectTransforms.Add(imageRectTransform);
+        buttonsTextRectTransforms.Add(textRectTransform);
+    }
+
 }

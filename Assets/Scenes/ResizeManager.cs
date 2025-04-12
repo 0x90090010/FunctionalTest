@@ -56,6 +56,7 @@ public class ResizeManager : MonoBehaviour
                     ratio = (double)Screen.width / (double)imageWidth;
                     resizeWidth = (int)(imageWidth * ratio);
                     resizeHeight = (int)(imageHeight * ratio);
+
                     if (resizeHeight < Screen.height)
                     {
                         ratio = (double)Screen.height / (double)resizeHeight;
@@ -97,6 +98,7 @@ public class ResizeManager : MonoBehaviour
                     ratio = (double)Screen.width / (double)imageWidth;
                     resizeWidth = (int)(imageWidth * ratio);
                     resizeHeight = (int)(imageHeight * ratio);
+
                     if (resizeHeight < Screen.height)
                     {
                         ratio = (double)Screen.height / (double)resizeHeight;
@@ -104,7 +106,6 @@ public class ResizeManager : MonoBehaviour
                         resizeHeight = (int)(resizeHeight * ratio);
                     }
                 }
-
 
                 imageRectTransform.sizeDelta = new Vector2(resizeWidth, resizeHeight);
                 Debug.Log("Image resized!");
@@ -119,6 +120,9 @@ public class ResizeManager : MonoBehaviour
     /// <summary>
     /// ResizeImageKeepingAspect
     /// 主に全画面に表示しない画像（ボタンなど）に使用する
+    /// 
+    /// 仕様
+    /// まだ
     /// </summary>
     public void ResizeImageKeepingAspect(Vector2 screenSize, List<RectTransform> imageRectTransforms)
     {
@@ -129,18 +133,173 @@ public class ResizeManager : MonoBehaviour
                 double widthRatio = Screen.width / screenSize.x;
                 double heightRatio = Screen.height / screenSize.y;
                 double ratio = Math.Min(widthRatio, heightRatio);
-                Debug.Log("ResizeImageKeepingAspect: " + ratio);
-                if (imageRectTransform != null)
-                {
-                    Image image = imageRectTransform.GetComponent<Image>();
-                    int resizeWidth = (int)(image.sprite.rect.width * ratio);
-                    int resizeHeight = (int)(image.sprite.rect.height * ratio);
 
-                    imageRectTransform.sizeDelta = new Vector2(resizeWidth, resizeHeight);
-                    Debug.Log("Image resized And Keep aspect!");
+                Image image = imageRectTransform.GetComponent<Image>();
+                int resizeWidth = (int)(image.sprite.rect.width * ratio);
+                int resizeHeight = (int)(image.sprite.rect.height * ratio);
+
+                if (resizeWidth > image.sprite.rect.width)
+                {
+                    resizeWidth = (int)image.sprite.rect.width;
                 }
+                if (resizeHeight > image.sprite.rect.height)
+                {
+                    resizeHeight = (int)image.sprite.rect.height;
+                }
+                if (resizeWidth < image.sprite.rect.width * 0.5f)
+                {
+                    resizeWidth = (int)(image.sprite.rect.width * 0.5f);
+                }
+                if (resizeHeight < image.sprite.rect.height * 0.5f)
+                {
+                    resizeHeight = (int)(image.sprite.rect.height * 0.5f);
+                }
+
+                imageRectTransform.sizeDelta = new Vector2(resizeWidth, resizeHeight);
+                Debug.Log("Image resized And Keep aspect!");                
             }
         }
     }
-    
+
+    /// <summary>
+    /// ResizeText
+    /// ボタンのテキストに使用する
+    /// 
+    /// 仕様
+    /// まだ
+    /// </summary>
+    public void ResizeText(Vector2 screenSize, List<RectTransform> textRectTransforms, List<int> fontSizeList)
+    {
+        foreach (RectTransform textRectTransform in textRectTransforms)
+        {
+            if (textRectTransform != null)
+            {
+                double widthRatio = Screen.width / screenSize.x;
+                double heightRatio = Screen.height / screenSize.y;
+                double ratio = Math.Min(widthRatio, heightRatio);
+
+                Text text = textRectTransform.GetComponent<Text>();
+                int index = textRectTransforms.IndexOf(textRectTransform);
+                double fontSize = (double)(fontSizeList[index]);
+                int resizeTextSize = (int)(fontSize * ratio);
+
+                if (resizeTextSize > fontSize)
+                {
+                    resizeTextSize = (int)fontSize;
+                }
+                if (resizeTextSize < fontSize * 0.5f)
+                {
+                    resizeTextSize = (int)(fontSize * 0.5f);
+                }
+
+                text.fontSize = resizeTextSize;
+                Debug.Log("Text resized!");                
+            }
+        }
+    }
+
+    /// <summary>
+    /// UpdatePosition
+    /// ボタンの座標に使用する
+    /// 
+    /// 仕様
+    /// まだ
+    /// </summary>
+    public void UpdatePosition(List<RectTransform> imageRectTransforms, List<string> buttonPosition)
+    {
+        foreach (RectTransform imageRectTransform in imageRectTransforms)
+        {
+            if (imageRectTransform != null)
+            {
+                Image image = imageRectTransform.GetComponent<Image>();
+                int index = imageRectTransforms.IndexOf(imageRectTransform);
+                string[] parts = buttonPosition[index].Split(',');
+                string strX = parts[0].Trim();
+                float x = 0;
+                float y = 0;
+                if (strX.Contains("Screen.width"))
+                {
+                    int baseValue = (int)(Screen.width);
+
+                    if (strX.Contains("-"))
+                    {
+                        string[] xParts = strX.Split('-');
+                        if (xParts.Length == 2 && int.TryParse(xParts[1].Trim(), out int offset))
+                        {
+                            x = baseValue - offset;
+                        }
+                        else
+                        {
+                            x = baseValue;
+                        }
+                    }
+                    else if (strX.Contains("+"))
+                    {
+                        string[] xParts = strX.Split('+');
+                        if (xParts.Length == 2 && int.TryParse(xParts[1].Trim(), out int offset))
+                        {
+                            x = baseValue + offset;
+                        }
+                        else
+                        {
+                            x = baseValue;
+                        }
+                    }
+                    else
+                    {
+                        x = baseValue;
+                    }
+                }
+                else
+                {
+                    float.TryParse(strX, out x);
+                }
+
+                string strY = parts[1].Trim();
+                if (strY.Contains("Screen.height"))
+                {
+                    int baseValue = (int)(Screen.height);
+
+                    if (strY.Contains("-"))
+                    {
+                        string[] yParts = strY.Split('-');
+                        if (yParts.Length == 2 && int.TryParse(yParts[1].Trim(), out int offset))
+                        {
+                            y = baseValue - offset;
+                        }
+                        else
+                        {
+                            y = baseValue;
+                        }
+                    }
+                    else if (strY.Contains("+"))
+                    {
+                        string[] yParts = strY.Split('+');
+                        if (yParts.Length == 2 && int.TryParse(yParts[1].Trim(), out int offset))
+                        {
+                            y = baseValue + offset;
+                        }
+                        else
+                        {
+                            y = baseValue;
+                        }
+                    }
+                    else
+                    {
+                        y = baseValue;
+                    }
+                }
+                else
+                {
+                    float.TryParse(strY, out y);
+                }
+
+                imageRectTransform.anchoredPosition = new Vector2((int)x, (int)y);
+                Debug.Log("Image resized And Keep aspect!");
+                
+            }
+        }
+
+    }
+
 }
