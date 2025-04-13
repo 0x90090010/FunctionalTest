@@ -181,10 +181,13 @@ public class TitleSceneManager : MonoBehaviour
 
     void SetButton()
     {
-        TitleSampleButton();
+        TitleUpLeftButton();
+        TitleUpRightButton();
+        TitleLowLeftButton();
+        TitleLowRightButton();
     }
 
-    void TitleSampleButton()
+    void TitleUpRightButton()
     {
         // 座標の初期位置を設定
         int x = (int)(Screen.width) - 10;
@@ -214,7 +217,7 @@ public class TitleSceneManager : MonoBehaviour
         // ここでボタン位置を設定する
         imageRectTransform.anchorMin = new Vector2(0, 1);
         imageRectTransform.anchorMax = new Vector2(0, 1);
-        imageRectTransform.pivot = new Vector2(1.0f, 1.0f);
+        imageRectTransform.pivot = new Vector2(1.0f, 1.0f); // 右上を中心
         imageRectTransform.anchoredPosition = new Vector2(x, y);
 
         // text用のゲームオブジェクトを作成
@@ -227,11 +230,200 @@ public class TitleSceneManager : MonoBehaviour
         titleSampleButtonTextObject.transform.SetParent(titleSampleButtonImageObject.transform, false);
 
         // textの内容を設定
-        buttonText.text = "SAMPLE";
+        buttonText.text = "UPRIGHT";
         buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         buttonText.alignment = TextAnchor.MiddleCenter;
         buttonText.color = Color.white;
-        buttonText.fontSize = 14;
+        buttonText.fontSize = 12;
+        buttonsTextDefaultSize.Add(buttonText.fontSize);
+
+        // RectTransformの設定
+        RectTransform textRectTransform = buttonText.GetComponent<RectTransform>();
+
+        textRectTransform.anchorMin = new Vector2(0, 0);
+        textRectTransform.anchorMax = new Vector2(1, 1);
+        textRectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        // ボタンの表示
+        titleSampleButtonImage.sprite = sprite;
+        buttonsRectTransforms.Add(imageRectTransform);
+        buttonsTextRectTransforms.Add(textRectTransform);
+    }
+
+    void TitleUpLeftButton()
+    {
+        // 座標の初期位置を設定
+        int x = 10;
+        int y = -10;
+
+        // 座標をテキストとしてリストに追加
+        buttonPositionList.Add($"{x},{y}");
+
+        // image用のゲームオブジェクトを作成
+        titleSampleButtonImageObject = new GameObject("TitleSampleButtonImage");
+
+        // imageコンポーネントを追加
+        Image titleSampleButtonImage = titleSampleButtonImageObject.AddComponent<Image>();
+
+        // canvasの子要素に設定
+        titleSampleButtonImageObject.transform.SetParent(titleCanvas.transform, false);
+
+        // RectTransformの設定
+        RectTransform imageRectTransform = titleSampleButtonImageObject.GetComponent<RectTransform>();
+
+        // 仮のボタン
+        Texture2D titleSampleButtonTexture = Resources.Load<Texture2D>("SampleButton");
+        Debug.Log("ButtonSize: " + titleSampleButtonTexture.width + ", " + titleSampleButtonTexture.height);
+        Sprite sprite = Sprite.Create(titleSampleButtonTexture, new Rect(0, 0, titleSampleButtonTexture.width, titleSampleButtonTexture.height), new Vector2(0.5f, 0.5f));
+        imageRectTransform.sizeDelta = new Vector2(titleSampleButtonTexture.width, titleSampleButtonTexture.height);
+
+        // ここでボタン位置を設定する
+        imageRectTransform.anchorMin = new Vector2(0, 1);
+        imageRectTransform.anchorMax = new Vector2(0, 1);
+        imageRectTransform.pivot = new Vector2(0.0f, 1.0f); // 左上を中心
+        imageRectTransform.anchoredPosition = new Vector2(x, y);
+
+        // text用のゲームオブジェクトを作成
+        GameObject titleSampleButtonTextObject = new GameObject("TitleSampleButtonText");
+
+        // textコンポーネントを追加
+        Text buttonText = titleSampleButtonTextObject.AddComponent<Text>();
+
+        // canvasの子要素に設定
+        titleSampleButtonTextObject.transform.SetParent(titleSampleButtonImageObject.transform, false);
+
+        // textの内容を設定
+        buttonText.text = "UPLEFT";
+        buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.color = Color.white;
+        buttonText.fontSize = 12;
+        buttonsTextDefaultSize.Add(buttonText.fontSize);
+
+        // RectTransformの設定
+        RectTransform textRectTransform = buttonText.GetComponent<RectTransform>();
+
+        textRectTransform.anchorMin = new Vector2(0, 0);
+        textRectTransform.anchorMax = new Vector2(1, 1);
+        textRectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        // ボタンの表示
+        titleSampleButtonImage.sprite = sprite;
+        buttonsRectTransforms.Add(imageRectTransform);
+        buttonsTextRectTransforms.Add(textRectTransform);
+    }
+
+    void TitleLowLeftButton()
+    {
+        // 座標の初期位置を設定
+        int x = 10;
+        int y = -(int)(Screen.height) + 10;
+
+        // 座標をテキストとしてリストに追加
+        buttonPositionList.Add($"{x},-(int)(Screen.height) + 10");
+
+        // image用のゲームオブジェクトを作成
+        titleSampleButtonImageObject = new GameObject("TitleSampleButtonImage");
+
+        // imageコンポーネントを追加
+        Image titleSampleButtonImage = titleSampleButtonImageObject.AddComponent<Image>();
+
+        // canvasの子要素に設定
+        titleSampleButtonImageObject.transform.SetParent(titleCanvas.transform, false);
+
+        // RectTransformの設定
+        RectTransform imageRectTransform = titleSampleButtonImageObject.GetComponent<RectTransform>();
+
+        // 仮のボタン
+        Texture2D titleSampleButtonTexture = Resources.Load<Texture2D>("SampleButton");
+        Debug.Log("ButtonSize: " + titleSampleButtonTexture.width + ", " + titleSampleButtonTexture.height);
+        Sprite sprite = Sprite.Create(titleSampleButtonTexture, new Rect(0, 0, titleSampleButtonTexture.width, titleSampleButtonTexture.height), new Vector2(0.5f, 0.5f));
+        imageRectTransform.sizeDelta = new Vector2(titleSampleButtonTexture.width, titleSampleButtonTexture.height);
+
+        // ここでボタン位置を設定する
+        imageRectTransform.anchorMin = new Vector2(0, 1);
+        imageRectTransform.anchorMax = new Vector2(0, 1);
+        imageRectTransform.pivot = new Vector2(0.0f, 0.0f); // 左下を中心
+        imageRectTransform.anchoredPosition = new Vector2(x, y);
+
+        // text用のゲームオブジェクトを作成
+        GameObject titleSampleButtonTextObject = new GameObject("TitleSampleButtonText");
+
+        // textコンポーネントを追加
+        Text buttonText = titleSampleButtonTextObject.AddComponent<Text>();
+
+        // canvasの子要素に設定
+        titleSampleButtonTextObject.transform.SetParent(titleSampleButtonImageObject.transform, false);
+
+        // textの内容を設定
+        buttonText.text = "LOWLEFT";
+        buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.color = Color.white;
+        buttonText.fontSize = 12;
+        buttonsTextDefaultSize.Add(buttonText.fontSize);
+
+        // RectTransformの設定
+        RectTransform textRectTransform = buttonText.GetComponent<RectTransform>();
+
+        textRectTransform.anchorMin = new Vector2(0, 0);
+        textRectTransform.anchorMax = new Vector2(1, 1);
+        textRectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        // ボタンの表示
+        titleSampleButtonImage.sprite = sprite;
+        buttonsRectTransforms.Add(imageRectTransform);
+        buttonsTextRectTransforms.Add(textRectTransform);
+    }
+
+    void TitleLowRightButton()
+    {
+        // 座標の初期位置を設定
+        int x = (int)(Screen.width) - 10;
+        int y = -(int)(Screen.height) + 10;
+
+        // 座標をテキストとしてリストに追加
+        buttonPositionList.Add($"(int)(Screen.width) - 10,-(int)(Screen.height) + 10");
+
+        // image用のゲームオブジェクトを作成
+        titleSampleButtonImageObject = new GameObject("TitleSampleButtonImage");
+
+        // imageコンポーネントを追加
+        Image titleSampleButtonImage = titleSampleButtonImageObject.AddComponent<Image>();
+
+        // canvasの子要素に設定
+        titleSampleButtonImageObject.transform.SetParent(titleCanvas.transform, false);
+
+        // RectTransformの設定
+        RectTransform imageRectTransform = titleSampleButtonImageObject.GetComponent<RectTransform>();
+
+        // 仮のボタン
+        Texture2D titleSampleButtonTexture = Resources.Load<Texture2D>("SampleButton");
+        Debug.Log("ButtonSize: " + titleSampleButtonTexture.width + ", " + titleSampleButtonTexture.height);
+        Sprite sprite = Sprite.Create(titleSampleButtonTexture, new Rect(0, 0, titleSampleButtonTexture.width, titleSampleButtonTexture.height), new Vector2(0.5f, 0.5f));
+        imageRectTransform.sizeDelta = new Vector2(titleSampleButtonTexture.width, titleSampleButtonTexture.height);
+
+        // ここでボタン位置を設定する
+        imageRectTransform.anchorMin = new Vector2(0, 1);
+        imageRectTransform.anchorMax = new Vector2(0, 1);
+        imageRectTransform.pivot = new Vector2(1.0f, 0.0f); // 右下を中心
+        imageRectTransform.anchoredPosition = new Vector2(x, y);
+
+        // text用のゲームオブジェクトを作成
+        GameObject titleSampleButtonTextObject = new GameObject("TitleSampleButtonText");
+
+        // textコンポーネントを追加
+        Text buttonText = titleSampleButtonTextObject.AddComponent<Text>();
+
+        // canvasの子要素に設定
+        titleSampleButtonTextObject.transform.SetParent(titleSampleButtonImageObject.transform, false);
+
+        // textの内容を設定
+        buttonText.text = "UPLEFT";
+        buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.color = Color.white;
+        buttonText.fontSize = 12;
         buttonsTextDefaultSize.Add(buttonText.fontSize);
 
         // RectTransformの設定

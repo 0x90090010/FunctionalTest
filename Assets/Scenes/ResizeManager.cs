@@ -201,6 +201,7 @@ public class ResizeManager : MonoBehaviour
     /// <summary>
     /// UpdatePosition
     /// ボタンの座標に使用する
+    /// ・SceneManagerで座標をテキストとしてリスト(List<string> buttonPosition)に追加し、値に変換する
     /// 
     /// 仕様
     /// まだ
@@ -219,7 +220,17 @@ public class ResizeManager : MonoBehaviour
                 float y = 0;
                 if (strX.Contains("Screen.width"))
                 {
-                    int baseValue = (int)(Screen.width);
+
+                    int baseValue = 0;
+                    if (strX.StartsWith("-"))
+                    {
+                        baseValue = -(int)(Screen.width);
+                        strX = strX.Substring(1).Trim();
+                    }
+                    else
+                    {
+                        baseValue = (int)(Screen.width);
+                    }
 
                     if (strX.Contains("-"))
                     {
@@ -258,7 +269,16 @@ public class ResizeManager : MonoBehaviour
                 string strY = parts[1].Trim();
                 if (strY.Contains("Screen.height"))
                 {
-                    int baseValue = (int)(Screen.height);
+                    int baseValue = 0;
+                    if (strY.StartsWith("-"))
+                    {
+                        baseValue = -(int)(Screen.height);
+                        strY = strY.Substring(1).Trim();
+                    }
+                    else
+                    {
+                        baseValue = (int)(Screen.height);
+                    }
 
                     if (strY.Contains("-"))
                     {
