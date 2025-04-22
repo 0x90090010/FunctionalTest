@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class TitleSceneManager : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class TitleSceneManager : MonoBehaviour
     private GameObject titleCanvasObject;
     private Canvas titleCanvas;
     private GameObject titleBackgroundImageObject;
+    private TextMeshProUGUI startText;
+    private float time;
     private GameObject titleSampleButtonImageObject;
     private List<RectTransform> imageRectTransforms;
     private List<RectTransform> buttonsRectTransforms;
@@ -31,6 +34,7 @@ public class TitleSceneManager : MonoBehaviour
         TitleMain();
         SetTitleBackground();
         SetButton();
+        SetStartText();
         resizeCanvas = titleCanvasObject.AddComponent<ResizeManager>();
         resizeImage = titleBackgroundImageObject.AddComponent<ResizeManager>();
         screenSize = new Vector2(Screen.width, Screen.height);
@@ -73,6 +77,11 @@ public class TitleSceneManager : MonoBehaviour
 
             Debug.Log("ResizeEnd");
         }
+
+        //Debug.Log(GetTextColorAlpha(startText.color));
+        Color color = startText.color;
+        color.a = GetTextColorAlpha(startText.color);
+        startText.color = color;
     }
 
     void TitleMain()
@@ -192,7 +201,7 @@ public class TitleSceneManager : MonoBehaviour
         // 座標の初期位置を設定
         int x = (int)(Screen.width) - 10;
         int y = -10;
-        
+
         // 座標をテキストとしてリストに追加
         buttonPositionList.Add($"(int)(Screen.width) - 10,{y}");
 
@@ -439,4 +448,51 @@ public class TitleSceneManager : MonoBehaviour
         buttonsTextRectTransforms.Add(textRectTransform);
     }
 
+    void SetStartText()
+    {
+        // text用のゲームオブジェクトを作成
+        GameObject startTextObject = new GameObject("StartText");
+        
+        // textコンポーネントを追加
+        //startText = startTextObject.AddComponent<Text>();
+        startText = startTextObject.AddComponent<TextMeshProUGUI>();
+
+        // canvasの子要素に設定
+        startTextObject.transform.SetParent(titleCanvas.transform, false);
+
+        // textの内容を設定
+        startText.text = "ANIMATION TEXT";
+        //startText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        startText.font = Resources.Load<TMP_FontAsset>("Fonts/LiberationSans SDF");
+        //startText.alignment = TextAnchor.MiddleCenter;
+        startText.alignment = TextAlignmentOptions.Center;
+        startText.color = Color.white;
+        startText.fontSize = 20;
+
+        // マテリアルのインスタンスを取得（これで他のオブジェクトへの影響を防ぐ）
+        startText.fontMaterial = new Material(startText.fontMaterial);
+
+        // アウトラインを有効化するには、以下の2つのプロパティを設定する
+        startText.fontMaterial.EnableKeyword("OUTLINE_ON");
+
+        // アウトラインの色と幅を設定
+        startText.outlineWidth = 0.4f; // アウトラインの幅
+        startText.outlineColor = Color.green; // アウトラインの色
+
+        // RectTransformの設定
+        RectTransform textRectTransform = startText.GetComponent<RectTransform>();
+        textRectTransform.anchorMin = new Vector2(0, 0);
+        textRectTransform.anchorMax = new Vector2(1, 1);
+        textRectTransform.pivot = new Vector2(0.5f, 0.5f);
+        textRectTransform.position = new Vector2(Screen.width / 2, Screen.height / 4);
+    }
+
+    float GetTextColorAlpha(Color color)
+    {
+        time += Time.deltaTime * 5f;
+        float value = (Mathf.Sin(time) + 1f) / 2f;
+        float alpha = Mathf.Lerp(0.5f, 1.0f, value);
+        //Debug.Log(color.a);
+        return alpha;
+    }
 }
